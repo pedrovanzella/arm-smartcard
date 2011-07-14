@@ -12,6 +12,7 @@
 #include "serial.h"
 #include "timer.h"
 #include "i2c.h"
+#include "vic_cpsr.h"
 
 int main(void)
 {

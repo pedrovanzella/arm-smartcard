@@ -1,6 +1,8 @@
 #ifndef _I2C_H_
 #define _I2C_H_
 
+#define CRYSTALFREQ 12000000
+
 /* The SmartCard interface on this board is on i2c0 */
 #define	I2C_BASE_ADDR	0xE001C000
 
