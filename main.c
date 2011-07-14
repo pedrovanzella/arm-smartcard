@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "LCD.h"
+#include "io.h"
 #include "serial.h"
 #include "timer.h"
 #include "i2c.h"
