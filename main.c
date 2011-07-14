@@ -16,6 +16,16 @@
 int main(void)
 {
 
+  init_timer0(); // LCD needs timer0 to function
+  LCDinit();
+
+  /******************** MAIN LOOP *********************/
+  while(1)
+  {
+    LCDgoto(0, 0); // Go to first line, first colum
+    LCDputs("oi");
+  }
+
   return 0;
 }
 

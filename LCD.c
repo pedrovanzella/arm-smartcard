@@ -89,3 +89,17 @@ void escreve_float(float f)
     LCDputchar(digs[nd]);
   }
 }
+
+void LCDgoto(int line, int col)
+{
+  /* Fisrt line starts at 0x80 */
+  if(line == 0)
+  {
+    LCDcomando(0x80 + col);
+  }
+  /* Second Line starts at 0xc0 */
+  else if(line == 1)
+  {
+    LCDcomando(0xc0 + col);
+  }
+}

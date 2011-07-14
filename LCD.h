@@ -10,6 +10,7 @@ void LCDinit(void);
 void LCDcomando(int c);
 void LCDputchar(int c);
 void LCDputs(char *s);
+void LCDgoto(int line, int col);
 void espera(unsigned int t);
 void escreve2digs(int x);
 void escreve_num(int num);
