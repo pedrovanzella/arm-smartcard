@@ -4,5 +4,6 @@
 #define CCLK 12000000
 
 void init_timer0(void);
+void init_timer1(void);
 
 #endif /* TIMER_H */

@@ -103,3 +103,8 @@ void LCDgoto(int line, int col)
     LCDcomando(0xc0 + col);
   }
 }
+
+void LCDclear(void)
+{
+  LCDcomando(1);
+}

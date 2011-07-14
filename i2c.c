@@ -21,40 +21,52 @@ void IRQ_i2c(void)
   switch(I2cSTAT)
   {
     case 0:
-    case 0x20:	/* Erro */
-    case 0x30:	/* Dado foi escrito recebendo NACK */
-    case 0x48:	/* Endereco de leitura recebeu NACK */
-      I2cCONSET = 0x10;	/* Gera STOP */
-      i2cn=-1;		/* i2cn=-1 indica erro */
+    case 0x20:	                /* Erro */
+    case 0x30:	                /* Dado foi escrito recebendo NACK */
+    case 0x48:	                /* Endereco de leitura recebeu NACK */
+      I2cCONSET = 0x10;	        /* Gera STOP */
+      i2cn = -1;		/* i2cn=-1 indica erro */
       break;
-    case 8:		/* Terminou de enviar o START bit */
-      I2cCONCLR=0x20;
-      I2cDAT = slvaddr;	/* Escreve endereco	*/
-      k=0;	/* Inicializa indice dos dados */
+    case 8:		        /* Terminou de enviar o START bit */
+      I2cCONCLR = 0x20;
+      I2cDAT = slvaddr;	        /* Escreve endereco	*/
+      k = 0;	                /* Inicializa indice dos dados */
       break;
-    case 0x18:	/* Enviou endereco de escrita recebendo ACK */
-    case 0x28:	/* Escreveu dado recebendo ACK */
+    case 0x18:	                /* Enviou endereco de escrita recebendo ACK */
+    case 0x28:	                /* Escreveu dado recebendo ACK */
       /* Escreve mais dados */
       if(i2cn)
       {
-        I2cDAT = i2cdados[k++]; i2cn--;
+        k++;
+        I2cDAT = i2cdados[k];
+        i2cn--;
       }
       else I2cCONSET=0x14;	/* Fim dos dados: gera STOP */
       break;
-    case 0x40:	/* Enviou endereco de leitura e recebeu ACK */
+    case 0x40:	                /* Enviou endereco de leitura e recebeu ACK */
       /* Prepara para iniciar a leitura de dados */
-      i2cdados[0]=I2cDAT; k=0; /* Le lixo so para iniciar */
-      if(i2cn==1) I2cCONCLR=4; /* So 1 dado responde NACK */
+      i2cdados[0] = I2cDAT;
+      k=0;                      /* Le lixo so para iniciar */
+      if(i2cn == 1)
+      {
+        I2cCONCLR = 4;         /* So 1 dado responde NACK */
+      }
       break;
-    case 0x50:	/* Dado recebido enviando ACK */
-      i2cdados[k++]=I2cDAT;	/* Le o proximo dado */
+    case 0x50:	               /* Dado recebido enviando ACK */
+      k++; // Parece que as pessoas nao sabem C e querem se aparecer.
+      i2cdados[k] = I2cDAT;	/* Le o proximo dado */
       /* Se for o ultimo envia NACK */
-      if(!(--i2cn)) I2cCONCLR=4;
+      i2cn--; // Garante que testaremos soh depois de decrementar
+      if(!i2cn)
+      {
+        I2cCONCLR = 4;
+      }
       break;
-    case 0x58:	/* Leu enviando NACK */
-      i2cdados[k++]=I2cDAT;	/* Le o ultimo dado */
-      i2cn=0;		/* Leu todos os dados */
-      I2cCONSET=0x10;	/* Gera STOP */
+    case 0x58:	                /* Leu enviando NACK */
+      k++;
+      i2cdados[k] = I2cDAT;	/* Le o ultimo dado */
+      i2cn = 0;		        /* Leu todos os dados */
+      I2cCONSET = 0x10;	        /* Gera STOP */
       break;
   }
 
@@ -75,18 +87,14 @@ void espera_i2c(int t)
 /* Inicializa o I2C com interrupcao */
 void ini_i2c(void)
 {
-  T0TCR = 0;              /* Desabilita T0 */
-  T0PR = CRYSTALFREQ/1000 - 1; /* Incrementa o contador T0TC 1000 vezes por segundo */
-  T0TCR = 2;      /* Inicializa T0 */
-  T0TCR = 1;      /* Habilita T0  */
-
-  PCONP |= 0x04000080;	/* Liga energia do i2c0 e i2c2 */
-  I2cCONCLR = 0xff;
-  I2cCONSET = 0x40;	/* Habilita o i2c2 um modo mestre */
-  I2cSCLH   = 100;	/* Tempo alto do SCL	*/
-  I2cSCLL   = 100;	/* Tempo baixo do SCL	*/
-
-  /* Habilita a interrupcao do i2c0 como IRQ no VIC	*/
+  PCONP |= 0x00000080;	/* Liga energia do I2C0 */
+  PINSEL1 &= 0xfd7fffff;
+  PINSEL1 |= 0x01400000;
+  I20CONCLR = 0xff;
+  I20CONSET = 0x40;	/* Habilita o I2C em modo mestre */
+  I20SCLH   = 100;	/* Tempo alto do SCL	*/
+  I20SCLL   = 100;	/* Tempo baixo do SCL	*/
+  /* Habilita a interrupcao do i2c como IRQ no VIC	*/
   desabilitaIRQ();	/* Definida no #include "vic_cpsr.h"	*/
   PINSEL1 &= 0xfd7fffff;
   PINSEL1 |= 0x01400000;
@@ -95,7 +103,7 @@ void ini_i2c(void)
   VICVectAddr9 = (int)IRQ_i2c;	/* Vetor 9 para atendimento do I2C0 */
   i2cn=0;
   habilitaIRQ();	/* Definida no #include "vic_cpsr.h"	*/
-  I2cCONSET=0x10;
+  I20CONSET=0x10;
 }
 
 int le_i2c(int i2caddr, char *buf, int n)
