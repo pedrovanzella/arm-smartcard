@@ -10,3 +10,8 @@ void init_timer0(void)
   T0TCR = 2;      /* Inicializa T0 */
   T0TCR = 1;      /* Habilita T0  */
 }
+
+void init_timer1(void)
+{
+
+}

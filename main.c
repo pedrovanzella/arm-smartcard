@@ -18,7 +18,7 @@ int main(void)
 {
   char buffer[17]; // Where we are reading to
   buffer[17] = '\0'; // Terminating string
-  int page = 0;
+  int page = 0xa0;
   int offset = 0;
 
   init_timer0(); // LCD needs timer0 to function
@@ -28,12 +28,16 @@ int main(void)
   /******************** MAIN LOOP *********************/
   while(1)
   {
-    escreve_i2c(page, offset, 1); // tell i2c we want to read from page + offset
+    offset &= 0xff;
+    buffer[0] = offset;
+    escreve_i2c(page, buffer, 1); // tell i2c we want to read from page + offset
     if(le_i2c(page, buffer, 16)) // If we failed to read 16 bytes
     {
       LCDclear();
       LCDgoto(0, 0);
       LCDputs("*****KABOOM*****");
+      LCDgoto(1, 0);
+      LCDputs(buffer);
     }
     else
     {
