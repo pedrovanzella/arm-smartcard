@@ -17,7 +17,7 @@
 int main(void)
 {
   char buffer[17]; // Where we are reading to
-  buffer[17] = '\0'; // Terminating string
+  buffer[16] = '\0'; // Terminating string
   int page = 0xa0;
   int offset = 0;
 
