@@ -8,8 +8,8 @@ SERIALDEV = /dev/tty.usbserial-A900fgvb
 CLOCKFREQ = 12000
 TARGET = smartcard
 MODULOS = main.o crt.o LCD.o serial.o timer.o i2c.o
-TERMINAL = screen
-BAUDRATE=19200
+TERMINAL = lpc21isp
+BAUDRATE = 19200
 
 #Nome do compilador C, assembler e linker
 CC      = arm-elf-gcc
@@ -39,6 +39,9 @@ $(TARGET).elf: $(MODULOS)
 
 $(TARGET)r.elf: $(MODULOS)
 	$(LD) $(LFLAGS) -Tlpc2378_ram.ld -o $(TARGET)r.elf $(MODULOS)
+
+terminal:
+	$(TERMINAL) -termonly $(SERIALDEV) $(BAUDRATE) $(CLOCKFREQ)
 
 #Chama o terminal e executa o programa na RAM (necessita do mon23)
 tser: $(TARGET)r.hex
