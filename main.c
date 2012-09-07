@@ -16,7 +16,7 @@
 
 int main(void)
 {
-	char buffer[17]; // Where we are reading to
+	unsigned char buffer[17]; // Where we are reading to
 	buffer[16] = '\0'; // Terminating string
 	int page = 0xa0;
 	int offset = 0;
@@ -33,7 +33,7 @@ int main(void)
 		if(le_i2c(page, buffer, 16)) { /* If we failed to read 16 bytes */
 			LCDclear();
 			LCDgoto(0, 0);
-			LCDputs("*****KABOOM*****");
+			LCDputs("Problema de leitura");
 			LCDgoto(1, 0);
 			LCDputs(buffer);
 		} else {

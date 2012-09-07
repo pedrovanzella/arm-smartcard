@@ -35,7 +35,7 @@ int escreve_i2c(int i2caddr, char *buf, int n);
  * n      Numero de bytes que devem ser lidos      *
  * Retorna ZERO se conseguiu ler                   *
  ***************************************************/
-int le_i2c(int i2caddr, char *buf, int n);
+int le_i2c(int i2caddr, unsigned char *buf, int n);
 
 /**********************************************************
  * Espera terminar uma transacao i2c (usada internamente) *

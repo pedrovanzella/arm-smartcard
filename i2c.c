@@ -100,7 +100,7 @@ void ini_i2c(void)
 	I20CONSET=0x10;
 }
 
-int le_i2c(int i2caddr, char *buf, int n)
+int le_i2c(int i2caddr, unsigned char *buf, int n)
 {
 	i2cdados = buf;
 	slvaddr = i2caddr | 1;	/* Endereco de leitura	*/
